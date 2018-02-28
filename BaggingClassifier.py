@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 # Loading Imputed Dataset
-df = pd.read_csv(r"C:\Users\Connor Higgins\Documents\Work\TEC_Mechanical\TraneML5000NUM.csv",
+df = pd.read_csv(r"C:\Users\Connor Higgins\Documents\Work\XXXXXXXX\XXXXXXXX.csv",
                 index_col='Unnamed: 0')
 
 #Splitting the data into training and testing portions: test set is 0 when classifying new units
@@ -32,7 +32,7 @@ bag_clf = BaggingClassifier(
     n_jobs=-1)
 bag_clf.fit(X_train, y_train) #Fitting the data to the model
 
-def HVAC_Unit_Predictor(Tonnage, Amps_NP, AVG_Amps, Voltage_NP, AVG_Volts, IM_HP, IM_Amps_NP, IM_Actual, Calc_TD):
+def Unit_Predictor(Tonnage, Amps_NP, AVG_Amps, Voltage_NP, AVG_Volts, IM_HP, IM_Amps_NP, IM_Actual, Calc_TD):
     
     # Inputing unit data into an array
     unit_predictor = np.array([Tonnage, Amps_NP, AVG_Amps, Voltage_NP, AVG_Volts, IM_HP, IM_Amps_NP, IM_Actual, Calc_TD])
