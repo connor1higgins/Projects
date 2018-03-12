@@ -670,8 +670,8 @@ horsedf_original = horsedf.copy()
 #horsedf: overwriting uncleaned, unimputed horse dataframe
 horsedf = pd.concat([numcols, onehotcols], axis=1)
 
-### Exporting as .csv file
-#horsedf.to_csv('ConnorHiggins-M02-Dataset.csv')
+## Exporting as .csv file
+horsedf.to_csv('ConnorHiggins-M02-Dataset.csv')
 
 
 
