@@ -3,7 +3,12 @@
 Created on Sat Mar 10 18:46:26 2018
 
 @author: Connor Higgins
+
 """
+
+""" Project I completed for a UW Data Science Course. 
+      Takes an unclean dataset from the uci machine learning archives
+      and returns a clean, imputed, one-hot encoded .csv file ready for model fitting"""
 
 ### Setup ###
 ## import statements
