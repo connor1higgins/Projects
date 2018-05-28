@@ -1,0 +1,45 @@
+ConnorHiggins-L02-CorrelationOpEd 
+
+Article URL: https://marketrealist.com/2018/05/comparing-bhges-and-novs-correlations-with-crude-oil
+Screencap of Article: https://i.imgur.com/gpUrWVI.png
+Financial Data (.csv files) obtained using https://intrinio.com/
+
+   On May 5th, the site Market Realist put out an article discussing how the stock price of two companies, Baker Hughes (BHGE)
+and National Oilwell Varco (NOV), correlated with West Texas Intermediate (WTI) crude oil's price over two annual time windows:
+May 7th 2016 to May 7th 2017 and May 7th 2017 to May7th 2018. The stock price of a third company, VanEck Vectors Oil Services
+ETF (OIH), was used as a correlational reference. The author used a standard barplot to illustrate an increase, over time, in the
+correlation coefficent of stock prices for both BHGE and NOV and the price of crude oil. The correlation for the stock price of
+OIH and crude oil, in contrast, remained relatively constant. The author went on to conclude that the stock prices of BHGE and 
+NOV were becoming more dependent on the value of crude oil. 
+
+   The author's use of a barplot has the benefit of succinctly summarizing the changes in correlation from year to year; however, 
+there is a good amount of information that is not being conveyed. To illustrate this, I replicated the author's analysis using 
+financial data for NOV, OIH, & WTI (crude oil) pulled from intrino.com (BHGE unfortunately wasn't available).
+
+	link : https://i.imgur.com/qSacMRb.png
+
+To summarize, I created time series plots of NOV, OIH, & WTI stock prices over the course of 2016-2017 and 2017-2018. Additionally,
+I created 3 seaborn lmplots, scatter plots with linear regressions, between NOV & WTI, OIH & WTI, and NOV & OIH for both time windows.
+Along with these plots, the correlation coefficients between stock prices were calculated and stored in pandas DataFrames.
+
+   My findings did not match the author's. First, the correlation between NOV and WTI (crude oil) slightly decreased between time windows,
+going from 0.785 to 0.776. NOV appears to have been highly correlative with crude oil for both time windows, rather than increasing in
+correlation from year to year. OIH, which the author used as a steady control, actually saw a significant drop in its correlation with 
+crude oil, going from 0.776 to 0.372. Finally, the author failed to mention how NOV and OIH correlated with one another. It should have
+been noted, as it's possible that all of these stock prices are, in actuality, affected by another market force. For my research, OIH &
+NOV had a correlation coefficient of 0.838 in the first time window and a coefficent of 0.663 in the second window.
+
+   Discrepancies between my results and the author's could be due to differences in our data collection, though it seems implausible that
+public financial records would vary to that degree. The data I obtained contained missing values for several days, which I thought could be
+related to days where the stock market was closed. Our time windows also both started and ended on May 7th. Despite this, one major takeaway 
+from this exercise would be that one's choice of time window can greatly influence the correlation results obtained. 
+
+   
+
+
+
+
+
+
+
+
