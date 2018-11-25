@@ -215,7 +215,7 @@ df_chicago = df_chicago[[
         'ENERGYSTARQuintile'
         ]]
 
-# Separating datasets into numeric, categorical, and target features
+# Separating numeric, categorical, and target features
 df_tar_sea2015 = df_sea2015[['ENERGYSTARQuintile', 'ENERGYSTARScore']].copy()
 df_cat_sea2015 = df_sea2015[['DataYear', 'BuildingType', 'PrimaryPropertyType']].copy()
 df_num_sea2015 = df_sea2015.drop(df_tar_sea2015, axis=1).copy()
@@ -232,6 +232,7 @@ df_tar_chicago = df_chicago[['ENERGYSTARQuintile', 'ENERGYSTARScore']].copy()
 df_cat_chicago = df_chicago[['DataYear', 'BuildingType', 'PrimaryPropertyType']].copy()
 df_num_chicago = df_chicago.drop(df_tar_chicago, axis=1).copy()
 df_num_chicago = df_num_chicago.drop(df_cat_chicago, axis=1)
+
 
 # Imputing missing numeric data
 from sklearn.impute import SimpleImputer
@@ -298,68 +299,47 @@ df_num_sea2017.index = df_num_sea2017.index.astype(int)
 df_tar_sea2017.index = df_tar_sea2017.index.astype(int)
 dfpre_sea2017 = pd.concat([df_cat_sea2017, df_num_sea2017, df_tar_sea2017], axis=1)
 dfpre_seattle = pd.concat([dfpre_sea2015, dfpre_sea2016, dfpre_sea2017], axis=0)
-dfpre_seattle.to_csv('Energy_Benchmarking_Seattle_pre_norm_onehot.csv')
+dfpre_seattle.to_csv('Energy_Benchmarking_Seattle_pre_norm_and_enc.csv')
 df_cat_chicago.index = df_cat_chicago.index.astype(int)
 df_num_chicago.index = df_num_chicago.index.astype(int)
 df_tar_chicago.index = df_tar_chicago.index.astype(int)
 dfpre_chicago = pd.concat([df_cat_chicago, df_num_chicago, df_tar_chicago], axis=1)
-dfpre_chicago.to_csv('Energy_Benchmarking_Chicago_pre_norm_onehot.csv')
+dfpre_chicago.to_csv('Energy_Benchmarking_Chicago_pre_norm_and_enc.csv')
 
 # Logarithmizing certain numeric features
 for column in winsor_seacols:
-    df_num_sea2015[column].replace({0: np.nan}, inplace=True)
-    df_num_sea2015[column] = np.log(df_num_sea2015[column])
-    df_num_sea2015[column].replace({np.nan: 0}, inplace=True)
-    df_num_sea2016[column].replace({0: np.nan}, inplace=True)
-    df_num_sea2016[column] = np.log(df_num_sea2016[column])
-    df_num_sea2016[column].replace({np.nan: 0}, inplace=True)
-    df_num_sea2017[column].replace({0: np.nan}, inplace=True)
-    df_num_sea2017[column] = np.log(df_num_sea2017[column])
-    df_num_sea2017[column].replace({np.nan: 0}, inplace=True)
+    dfpre_seattle[column].replace({0: np.nan}, inplace=True)
+    dfpre_seattle[column] = np.log(dfpre_seattle[column])
+    dfpre_seattle[column].replace({np.nan: 0}, inplace=True)
 for column in winsor_chicols:
-    df_num_chicago[column].replace({0: np.nan}, inplace=True)
-    df_num_chicago[column] = np.log(df_num_chicago[column])
-    df_num_chicago[column].replace({np.nan: 0}, inplace=True)
+    dfpre_chicago[column].replace({0: np.nan}, inplace=True)
+    dfpre_chicago[column] = np.log(dfpre_chicago[column])
+    dfpre_chicago[column].replace({np.nan: 0}, inplace=True)
 
 # Normalizing numeric features
-from sklearn.preprocessing import StandardScaler
-scaler = StandardScaler()
-for column in df_num_sea2015.columns:
-    df_num_sea2015[column] = \
-    scaler.fit_transform(df_num_sea2015[column].values.reshape(-1, 1))
-for column in df_num_sea2016.columns:
-    df_num_sea2016[column] = \
-    scaler.fit_transform(df_num_sea2016[column].values.reshape(-1, 1))
-for column in df_num_sea2017.columns:
-    df_num_sea2017[column] = \
-    scaler.fit_transform(df_num_sea2017[column].values.reshape(-1, 1))
-for column in df_num_chicago.columns:
-    df_num_chicago[column] = \
-    scaler.fit_transform(df_num_chicago[column].values.reshape(-1, 1))
+from sklearn.preprocessing import MinMaxScaler
+scaler = MinMaxScaler()
+num_cols_sea = list(dfpre_seattle.select_dtypes(include=['number']).columns)
+num_cols_sea.remove('ENERGYSTARScore')
+for column in num_cols_sea:
+    dfpre_seattle[column] = \
+    scaler.fit_transform(dfpre_seattle[column].values.reshape(-1, 1))
+num_cols_chi = list(dfpre_chicago.select_dtypes(include=['number']).columns)
+num_cols_chi.remove('ENERGYSTARScore')
+for column in num_cols_chi:
+    dfpre_chicago[column] = \
+    scaler.fit_transform(dfpre_chicago[column].values.reshape(-1, 1))
 
-# One hot encoding categorical features
-df_cat_sea2015 = pd.get_dummies(df_cat_sea2015).astype('int64')
-df_cat_sea2016 = pd.get_dummies(df_cat_sea2016).astype('int64')
-df_cat_sea2017 = pd.get_dummies(df_cat_sea2017).astype('int64')
-df_cat_chicago = pd.get_dummies(df_cat_chicago).astype('int64')
+# One hot encoding categorical features; creating final dataframes
+cat_cols_sea = dfpre_seattle.select_dtypes(include=['object']).columns
+df_seattle = pd.get_dummies(dfpre_seattle, columns=cat_cols_sea)
+cat_cols_chi = dfpre_chicago.select_dtypes(include=['object']).columns
+df_chicago = pd.get_dummies(dfpre_chicago, columns=cat_cols_chi)
 
-# Recombining features and exporting normalized/one-hot encoded datasets as .csv
-df_num_sea2015.index = df_num_sea2015.index.astype(int)
-df_sea2015 = pd.concat([df_cat_sea2015, df_num_sea2015, df_tar_sea2015], axis=1)
-df_sea2015.insert(1, 'DataYear_2016', 0)
-df_sea2015.insert(2, 'DataYear_2017', 0)
-df_num_sea2016.index = df_num_sea2016.index.astype(int)
-df_sea2016 = pd.concat([df_cat_sea2016, df_num_sea2016, df_tar_sea2016], axis=1)
-df_sea2016.insert(0, 'DataYear_2015', 0)
-df_sea2016.insert(2, 'DataYear_2017', 0)
-df_sea2016.insert(25, 'PrimaryPropertyType_Self-Storage Facility', 0)
-df_num_sea2017.index = df_num_sea2017.index.astype(int)
-df_sea2017 = pd.concat([df_cat_sea2017, df_num_sea2017, df_tar_sea2017], axis=1)
-df_sea2017.insert(0, 'DataYear_2015', 0)
-df_sea2017.insert(1, 'DataYear_2016', 0)
-df_seattle = pd.concat([df_sea2015, df_sea2016, df_sea2017], axis=0)
+# Reordering several columns and exporting datasets as .csv files
+new_order_sea = [23, 24, 25] + list(range(21)) + list(range(26, 53)) + [21, 22]
+df_seattle = df_seattle[df_seattle.columns[new_order_sea]]
 df_seattle.to_csv('Energy_Benchmarking_Seattle_clean.csv')
-df_num_chicago.index = df_num_chicago.index.astype(int)
-df_chicago = pd.concat([df_cat_chicago, df_num_chicago, df_tar_chicago], axis=1)
+new_order_chi = [16, 17, 18] + list(range(14)) + list(range(19, 39)) + [14, 15]
+df_chicago = df_chicago[df_chicago.columns[new_order_chi]]
 df_chicago.to_csv('Energy_Benchmarking_Chicago_clean.csv')
-
