@@ -39,8 +39,9 @@ df_sea2015 = df_sea2015[~df_sea2015['SiteEnergyUseWN(kBtu)'].isnull()]
 # Removing entries without recorded ENERGYSTARScore values
 df_sea2015 = df_sea2015[~df_sea2015['ENERGYSTARScore'].isnull()]
 df_sea2015.reset_index(inplace=True, drop=True)
-# Converting 'DataYear' feature from int dtype to str
+# Converting 'DataYear' and 'CouncilDistrictCode' features from int dtype to str
 df_sea2015['DataYear'] = df_sea2015['DataYear'].astype(str)
+df_sea2015['CouncilDistrictCode'] = df_sea2015['CouncilDistrictCode'].astype(str)
 # Removing newline characters from PrimaryPropertyType values
 df_sea2015['PrimaryPropertyType'] = \
     df_sea2015['PrimaryPropertyType'].str.replace('\n', '')
@@ -73,8 +74,9 @@ df_sea2016 = df_sea2016[~df_sea2016['Outlier'].str.contains('outlier')]
 # Removing entries without recorded ENERGYSTARScore values
 df_sea2016 = df_sea2016[~df_sea2016['ENERGYSTARScore'].isnull()]
 df_sea2016.reset_index(inplace=True, drop=True)
-# Converting 'DataYear' feature from int dtype to str
+# Converting 'DataYear' and 'CouncilDistrictCode' features from int dtype to str
 df_sea2016['DataYear'] = df_sea2016['DataYear'].astype(str)
+df_sea2016['CouncilDistrictCode'] = df_sea2016['CouncilDistrictCode'].astype(str)
 # Renaming several features to match df_sea2015
 df_sea2016.rename(index=str, inplace=True,
     columns={'GHGEmissionsIntensity':'GHGEmissionsIntensity(kgCO2e/ft2)',
@@ -97,9 +99,13 @@ df_sea2017['Outlier'] = df_sea2017['Outlier'].astype(str)
 df_sea2017 = df_sea2017[~df_sea2017['Outlier'].str.contains('outlier')]
 # Removing entries without recorded ENERGYSTARScore values
 df_sea2017 = df_sea2017[~df_sea2017['ENERGYSTARScore'].isnull()]
+# Removing entires without recorded CouncilDistrictCode values
+df_sea2017 = df_sea2017[~df_sea2017['CouncilDistrictCode'].isnull()]
 df_sea2017.reset_index(inplace=True, drop=True)
-# Converting 'DataYear' feature from int dtype to str
+# Converting 'DataYear' and 'CouncilDistrictCode' features from int dtype to str
 df_sea2017['DataYear'] = df_sea2017['DataYear'].astype(str)
+df_sea2017['CouncilDistrictCode'] = \
+    df_sea2017['CouncilDistrictCode'].astype(int).astype(str)
 # Renaming several features to match df_sea2015 and df_sea2016
 df_sea2017.rename(index=str, inplace=True,
     columns={'GHGEmissionsIntensity':'GHGEmissionsIntensity(kgCO2e/ft2)',
@@ -181,7 +187,7 @@ df_sea2015 = df_sea2015[[
         'SiteEnergyUseWN(kBtu)', 'SteamUse(kBtu)', 'Electricity(kWh)',
         'Electricity(kBtu)', 'NaturalGas(therms)', 'NaturalGas(kBtu)',
         'GHGEmissions(MetricTonsCO2e)', 'GHGEmissionsIntensity(kgCO2e/ft2)',
-        'Latitude', 'Longitude', 'ENERGYSTARQuintile'
+        'Latitude', 'Longitude', 'ENERGYSTARQuintile', 'CouncilDistrictCode'
         ]]
 df_sea2016 = df_sea2016[[
         'DataYear', 'BuildingType', 'PrimaryPropertyType',
@@ -192,7 +198,7 @@ df_sea2016 = df_sea2016[[
         'SiteEnergyUseWN(kBtu)', 'SteamUse(kBtu)', 'Electricity(kWh)',
         'Electricity(kBtu)', 'NaturalGas(therms)', 'NaturalGas(kBtu)',
         'GHGEmissions(MetricTonsCO2e)', 'GHGEmissionsIntensity(kgCO2e/ft2)',
-        'Latitude', 'Longitude', 'ENERGYSTARQuintile'
+        'Latitude', 'Longitude', 'ENERGYSTARQuintile', 'CouncilDistrictCode'
         ]]
 df_sea2017 = df_sea2017[[
         'DataYear', 'BuildingType', 'PrimaryPropertyType',
@@ -203,7 +209,7 @@ df_sea2017 = df_sea2017[[
         'SiteEnergyUseWN(kBtu)', 'SteamUse(kBtu)', 'Electricity(kWh)',
         'Electricity(kBtu)', 'NaturalGas(therms)', 'NaturalGas(kBtu)',
         'GHGEmissions(MetricTonsCO2e)', 'GHGEmissionsIntensity(kgCO2e/ft2)',
-        'Latitude', 'Longitude', 'ENERGYSTARQuintile'
+        'Latitude', 'Longitude', 'ENERGYSTARQuintile', 'CouncilDistrictCode'
         ]]
 df_chicago = df_chicago[[
         'DataYear', 'BuildingType', 'PrimaryPropertyType',
@@ -217,15 +223,18 @@ df_chicago = df_chicago[[
 
 # Separating numeric, categorical, and target features
 df_tar_sea2015 = df_sea2015[['ENERGYSTARQuintile', 'ENERGYSTARScore']].copy()
-df_cat_sea2015 = df_sea2015[['DataYear', 'BuildingType', 'PrimaryPropertyType']].copy()
+df_cat_sea2015 = df_sea2015[['DataYear', 'BuildingType',
+                             'PrimaryPropertyType', 'CouncilDistrictCode']].copy()
 df_num_sea2015 = df_sea2015.drop(df_tar_sea2015, axis=1).copy()
 df_num_sea2015 = df_num_sea2015.drop(df_cat_sea2015, axis=1)
 df_tar_sea2016 = df_sea2016[['ENERGYSTARQuintile', 'ENERGYSTARScore']].copy()
-df_cat_sea2016 = df_sea2016[['DataYear', 'BuildingType', 'PrimaryPropertyType']].copy()
+df_cat_sea2016 = df_sea2016[['DataYear', 'BuildingType',
+                             'PrimaryPropertyType', 'CouncilDistrictCode']].copy()
 df_num_sea2016 = df_sea2016.drop(df_tar_sea2016, axis=1).copy()
 df_num_sea2016 = df_num_sea2016.drop(df_cat_sea2016, axis=1)
 df_tar_sea2017 = df_sea2017[['ENERGYSTARQuintile', 'ENERGYSTARScore']].copy()
-df_cat_sea2017 = df_sea2017[['DataYear', 'BuildingType', 'PrimaryPropertyType']].copy()
+df_cat_sea2017 = df_sea2017[['DataYear', 'BuildingType',
+                             'PrimaryPropertyType', 'CouncilDistrictCode']].copy()
 df_num_sea2017 = df_sea2017.drop(df_tar_sea2017, axis=1).copy()
 df_num_sea2017 = df_num_sea2017.drop(df_cat_sea2017, axis=1)
 df_tar_chicago = df_chicago[['ENERGYSTARQuintile', 'ENERGYSTARScore']].copy()
@@ -337,7 +346,7 @@ cat_cols_chi = dfpre_chicago.select_dtypes(include=['object']).columns
 df_chicago = pd.get_dummies(dfpre_chicago, columns=cat_cols_chi)
 
 # Reordering several columns and exporting datasets as .csv files
-new_order_sea = [23, 24, 25] + list(range(21)) + list(range(26, 53)) + [21, 22]
+new_order_sea = [23, 24, 25] + list(range(21)) + list(range(26, 60)) + [21, 22]
 df_seattle = df_seattle[df_seattle.columns[new_order_sea]]
 df_seattle.to_csv('Energy_Benchmarking_Seattle_clean.csv')
 new_order_chi = [16, 17, 18] + list(range(14)) + list(range(19, 39)) + [14, 15]
