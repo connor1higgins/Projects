@@ -1,2 +1,2 @@
 # Projects
-Various projects I've worked on while earning a certificate in Data Science from UW, including some very early work from when I was just starting to explore various python packages. The best examples of my current abilites can be found in Part III of the UWDataScience folder, especially my final capstone project: https://github.com/connor1higgins/Projects/blob/master/UWDataScience/PartIII/CH-M03-Capstone-Project.ipynb
+Various projects I've worked on while earning a certificate in Data Science from UW, including some very early work from when I was just starting to explore various python packages. 
